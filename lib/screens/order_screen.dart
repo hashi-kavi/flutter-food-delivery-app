@@ -22,7 +22,7 @@ class _OrderScreenState extends State<OrderScreen> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final orderProvider = Provider.of<OrderProvider>(context, listen: false);
       if (authProvider.currentUser != null) {
-        orderProvider.loadUserOrders(authProvider.currentUser!.id);
+        orderProvider.loadUserOrders(authProvider.currentUser!.uid);
       }
     });
   }

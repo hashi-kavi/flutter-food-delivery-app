@@ -103,7 +103,7 @@ class CartScreen extends StatelessWidget {
                               : () async {
                                   // Place order
                                   bool success = await orderProvider.placeOrder(
-                                    userId: authProvider.currentUser!.id,
+                                    userId: authProvider.currentUser!.uid,
                                     items: cartProvider.getOrderItems(),
                                     deliveryAddress:
                                         authProvider.currentUser?.address,

@@ -1,7 +1,6 @@
 // lib/providers/auth_provider.dart
 
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../services/firebase_auth_service.dart';
 
@@ -18,6 +17,16 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _user != null;
 
   AuthProvider() {
+    // Mock user for testing without Firebase
+    _user = AppUser(
+      uid: 'test123',
+      email: 'guest@test.com',
+      name: 'Guest User',
+      phone: '123-456-7890',
+      address: '123 Main St',
+    );
+
+    /* 
     // Listen to auth state changes
     _authService.authStateChanges.listen((User? firebaseUser) async {
       if (firebaseUser != null) {
@@ -28,6 +37,7 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
       }
     });
+    */
   }
 
   // Sign up
@@ -83,14 +93,14 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _authService.updateUserProfile(
-        userId: _user!.id,
+        userId: _user!.uid,
         name: name,
         phoneNumber: phoneNumber,
         address: address,
       );
 
       // Refresh user data
-      _user = await _authService.getUserData(_user!.id);
+      _user = await _authService.getUserData(_user!.uid);
       _setLoading(false);
       return true;
     } catch (e) {

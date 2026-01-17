@@ -22,19 +22,20 @@ class FirebaseAuthService {
   }) async {
     try {
       // Create user in Firebase Auth
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
       // Create user document in Firestore
       AppUser newUser = AppUser(
-        id: userCredential.user!.uid,
+        uid: userCredential.user!.uid,
         email: email,
         name: name,
       );
 
-      await _firestore.collection('users').doc(newUser.id).set(newUser.toMap());
+      await _firestore
+          .collection('users')
+          .doc(newUser.uid)
+          .set(newUser.toMap());
 
       return newUser;
     } on FirebaseAuthException catch (e) {
@@ -76,8 +77,10 @@ class FirebaseAuthService {
   // Get user data from Firestore
   Future<AppUser?> getUserData(String userId) async {
     try {
-      DocumentSnapshot doc =
-          await _firestore.collection('users').doc(userId).get();
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(userId)
+          .get();
 
       if (doc.exists) {
         return AppUser.fromMap(doc.data() as Map<String, dynamic>);

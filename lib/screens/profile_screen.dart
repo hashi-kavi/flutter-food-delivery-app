@@ -27,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       text: authProvider.currentUser?.name ?? '',
     );
     _phoneController = TextEditingController(
-      text: authProvider.currentUser?.phoneNumber ?? '',
+      text: authProvider.currentUser?.phone ?? '',
     );
     _addressController = TextEditingController(
       text: authProvider.currentUser?.address ?? '',
@@ -188,8 +188,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 setState(() {
                                   _isEditing = false;
                                   _nameController.text = user.name;
-                                  _phoneController.text =
-                                      user.phoneNumber ?? '';
+                                  _phoneController.text = user.phone ?? '';
                                   _addressController.text = user.address ?? '';
                                 });
                               },
