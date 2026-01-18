@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
+import 'admin_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -216,6 +217,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
 
                     const SizedBox(height: 24),
+
+                    // Admin Panel button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AdminScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.admin_panel_settings),
+                        label: const Text('Admin Panel - Manage Foods'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
 
                     // Logout button
                     SizedBox(

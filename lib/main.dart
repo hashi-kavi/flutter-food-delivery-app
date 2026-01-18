@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
@@ -14,8 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with proper options
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }
@@ -35,7 +34,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Food Delivery App',
         theme: ThemeData(
-          primarySwatch: Colors.orange,
+          useMaterial3: false, 
+          primarySwatch: Colors.red,
           scaffoldBackgroundColor: Colors.grey[50],
           appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
         ),
