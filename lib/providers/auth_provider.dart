@@ -8,7 +8,7 @@ class AuthProvider with ChangeNotifier {
   final FirebaseAuthService _authService = FirebaseAuthService();
 
   AppUser? _user;
-  bool _isLoading = false;
+  bool _isLoading = true;
   String? _errorMessage;
 
   AppUser? get currentUser => _user;
@@ -17,27 +17,26 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _user != null;
 
   AuthProvider() {
-    // Mock user for testing without Firebase
-    _user = AppUser(
-      uid: 'test123',
-      email: 'guest@test.com',
-      name: 'Guest User',
-      phone: '123-456-7890',
-      address: '123 Main St',
-    );
+    _init();
+  }
 
-    /* 
-    // Listen to auth state changes
-    _authService.authStateChanges.listen((User? firebaseUser) async {
-      if (firebaseUser != null) {
-        _user = await _authService.getUserData(firebaseUser.uid);
+  Future<void> _init() async {
+    try {
+      // Listen to auth state changes
+      _authService.authStateChanges.listen((firebaseUser) async {
+        if (firebaseUser != null) {
+          _user = await _authService.getUserData(firebaseUser.uid);
+        } else {
+          _user = null;
+        }
+        _isLoading = false;
         notifyListeners();
-      } else {
-        _user = null;
-        notifyListeners();
-      }
-    });
-    */
+      });
+    } catch (e) {
+      print('Firebase error: $e');
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   // Sign up

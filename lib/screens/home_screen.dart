@@ -206,10 +206,53 @@ class _FoodListViewState extends State<FoodListView> {
 
             // Food Grid
             Expanded(
-              child: Builder(
-                builder: (context) {
-                  // Use sample data
-                  var foods = SampleFoodData.getSampleFoods();
+              child: StreamBuilder<List<Food>>(
+                stream: foodService.getFoods(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.red[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text('Error: ${snapshot.error}'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => setState(() {}),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.restaurant_menu,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          const Text('No food items available'),
+                        ],
+                      ),
+                    );
+                  }
+
+                  var foods = snapshot.data!;
 
                   // Filter by category
                   if (_selectedCategory != 'All') {

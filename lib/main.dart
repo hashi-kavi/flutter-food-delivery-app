@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
@@ -9,13 +9,19 @@ import 'providers/order_provider.dart';
 
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'upload_data_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with proper options
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    print('Firebase init failed: $e');
+  }
 
   runApp(const MyApp());
 }
@@ -58,6 +64,6 @@ class AuthWrapper extends StatelessWidget {
 
     return authProvider.currentUser != null
         ? const HomeScreen()
-        : LoginScreen();
+        : const LoginScreen();
   }
 }
