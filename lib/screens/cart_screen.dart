@@ -14,6 +14,37 @@ class CartScreen extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
     final orderProvider = Provider.of<OrderProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.currentUser?.isAdmin ?? false;
+
+    // Prevent admin from accessing cart
+    if (isAdmin) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Cart')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.admin_panel_settings,
+                size: 100,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Admins cannot place orders',
+                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Please use the Admin Panel to manage the app',
+                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cart')),
@@ -42,8 +73,8 @@ class CartScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     itemCount: cartProvider.items.length,
                     itemBuilder: (context, index) {
-                      final cartItem = cartProvider.items.values
-                          .toList()[index];
+                      final cartItem =
+                          cartProvider.items.values.toList()[index];
                       return CartItemCard(
                         cartItem: cartItem,
                         onRemove: () {

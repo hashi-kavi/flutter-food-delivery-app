@@ -213,8 +213,77 @@ class OrderCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Cancel order button (only for pending orders)
+                if (order.status.toLowerCase() == 'pending') ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showCancelDialog(context, order),
+                      icon: const Icon(Icons.cancel, color: Colors.red),
+                      label: const Text(
+                        'Cancel Order',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCancelDialog(BuildContext context, Order order) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel Order?'),
+        content: const Text(
+          'Are you sure you want to cancel this order? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final orderProvider =
+                  Provider.of<OrderProvider>(context, listen: false);
+
+              // Show loading
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Canceling order...'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+
+              final success = await orderProvider.cancelOrder(order.id);
+
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Order canceled successfully'
+                          : 'Failed to cancel order',
+                    ),
+                    backgroundColor: success ? Colors.green : Colors.red,
+                  ),
+                );
+              }
+            },
+            child:
+                const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

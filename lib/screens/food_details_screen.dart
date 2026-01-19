@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/food.dart';
 import '../providers/cart_provider.dart';
+import '../providers/auth_provider.dart';
 
 class FoodDetailsScreen extends StatelessWidget {
   final Food food;
@@ -13,6 +14,8 @@ class FoodDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.currentUser?.isAdmin ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +51,10 @@ class FoodDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           food.name,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -127,48 +133,50 @@ class FoodDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, -3),
+      bottomNavigationBar: isAdmin
+          ? null
+          : SafeArea(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: food.isAvailable
+                      ? () {
+                          cartProvider.addItem(food);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${food.name} added to cart'),
+                              duration: const Duration(seconds: 2),
+                              action: SnackBarAction(
+                                label: 'UNDO',
+                                onPressed: () {
+                                  cartProvider.removeItem(food.id);
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text(
+                    'Add to Cart',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: ElevatedButton(
-            onPressed: food.isAvailable
-                ? () {
-                    cartProvider.addItem(food);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${food.name} added to cart'),
-                        duration: const Duration(seconds: 2),
-                        action: SnackBarAction(
-                          label: 'UNDO',
-                          onPressed: () {
-                            cartProvider.removeItem(food.id);
-                          },
-                        ),
-                      ),
-                    );
-                  }
-                : null,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: const Text(
-              'Add to Cart',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
