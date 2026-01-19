@@ -38,16 +38,33 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AdminUserProvider()),
         ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Food Delivery App',
-        theme: ThemeData(
-          useMaterial3: false,
-          primarySwatch: Colors.red,
-          scaffoldBackgroundColor: Colors.grey[50],
-          appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
-        ),
-        home: const AuthWrapper(),
+      child: Builder(
+        builder: (context) {
+          // Set up logout callback to clear cart and orders
+          final authProvider =
+              Provider.of<AuthProvider>(context, listen: false);
+          final cartProvider =
+              Provider.of<CartProvider>(context, listen: false);
+          final orderProvider =
+              Provider.of<OrderProvider>(context, listen: false);
+
+          authProvider.onLogout = () {
+            cartProvider.clear();
+            orderProvider.clearOrders();
+          };
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Food Delivery App',
+            theme: ThemeData(
+              useMaterial3: false,
+              primarySwatch: Colors.red,
+              scaffoldBackgroundColor: Colors.grey[50],
+              appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
+            ),
+            home: const AuthWrapper(),
+          );
+        },
       ),
     );
   }

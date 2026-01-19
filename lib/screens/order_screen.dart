@@ -109,7 +109,7 @@ class OrderCard extends StatelessWidget {
           size: 32,
         ),
         title: Text(
-          'Order #${order.id.substring(0, 8)}',
+          'Order #${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(

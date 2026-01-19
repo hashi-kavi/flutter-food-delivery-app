@@ -10,12 +10,39 @@ class AdminOrderProvider with ChangeNotifier {
   List<app_models.Order> _orders = [];
   bool _isLoading = false;
   String? _errorMessage;
+  int _newOrderCount = 0;
 
   List<app_models.Order> get orders => _orders;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  int get newOrderCount => _newOrderCount;
 
-  // Fetch all orders (admin view)
+  // Listen to real-time order updates (admin view)
+  void listenToOrders() {
+    _firestore
+        .collection('orders')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .listen(
+      (snapshot) {
+        final newOrders = snapshot.docs
+            .map((doc) => app_models.Order.fromMap(doc.data()))
+            .toList();
+
+        // Count new pending orders
+        _newOrderCount = newOrders.where((o) => o.status == 'pending').length;
+
+        _orders = newOrders;
+        notifyListeners();
+      },
+      onError: (error) {
+        _errorMessage = 'Failed to fetch orders: $error';
+        notifyListeners();
+      },
+    );
+  }
+
+  // Fetch all orders (admin view) - one-time fetch
   Future<void> fetchAllOrders() async {
     _isLoading = true;
     _errorMessage = null;
@@ -38,6 +65,12 @@ class AdminOrderProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Reset new order count
+  void resetNewOrderCount() {
+    _newOrderCount = 0;
+    notifyListeners();
   }
 
   // Update order status

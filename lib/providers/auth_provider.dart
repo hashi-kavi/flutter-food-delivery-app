@@ -7,6 +7,9 @@ import '../services/firebase_auth_service.dart';
 class AuthProvider with ChangeNotifier {
   final FirebaseAuthService _authService = FirebaseAuthService();
 
+  // Callbacks for clearing cart and orders on logout
+  Function()? onLogout;
+
   AppUser? _user;
   bool _isLoading = false;
   String? _errorMessage;
@@ -107,6 +110,9 @@ class AuthProvider with ChangeNotifier {
   Future<void> signOut() async {
     _setLoading(true);
     try {
+      // Call logout callback to clear cart and orders
+      onLogout?.call();
+
       await _authService.signOut();
       _user = null;
       _setLoading(false);

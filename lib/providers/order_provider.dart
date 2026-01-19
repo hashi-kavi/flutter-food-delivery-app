@@ -1,15 +1,17 @@
 // lib/providers/order_provider.dart
 
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/order.dart';
 import '../services/firebase_order_service.dart';
 
 class OrderProvider with ChangeNotifier {
   final FirebaseOrderService _orderService = FirebaseOrderService();
-  
+
   List<Order> _orders = [];
   bool _isLoading = false;
   String? _errorMessage;
+  StreamSubscription<List<Order>>? _orderSubscription;
 
   List<Order> get orders => [..._orders];
   bool get isLoading => _isLoading;
@@ -52,7 +54,10 @@ class OrderProvider with ChangeNotifier {
 
   // Load user orders
   void loadUserOrders(String userId) {
-    _orderService.getUserOrders(userId).listen(
+    // Cancel previous subscription
+    _orderSubscription?.cancel();
+
+    _orderSubscription = _orderService.getUserOrders(userId).listen(
       (orders) {
         _orders = orders;
         notifyListeners();
@@ -62,6 +67,14 @@ class OrderProvider with ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  // Clear orders and stop listening
+  void clearOrders() {
+    _orderSubscription?.cancel();
+    _orderSubscription = null;
+    _orders = [];
+    notifyListeners();
   }
 
   // Cancel order
@@ -88,5 +101,11 @@ class OrderProvider with ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _orderSubscription?.cancel();
+    super.dispose();
   }
 }

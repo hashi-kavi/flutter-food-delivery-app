@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/food.dart';
 import '../services/firebase_food_service.dart';
 import '../providers/cart_provider.dart';
+import '../providers/auth_provider.dart';
 import 'food_details_screen.dart';
 import 'cart_screen.dart';
 import 'order_screen.dart';
@@ -74,6 +75,8 @@ class _FoodListViewState extends State<FoodListView> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.currentUser?.isAdmin ?? false;
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -88,38 +91,39 @@ class _FoodListViewState extends State<FoodListView> {
           ),
         ),
         actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CartScreen()),
-                  );
-                },
-              ),
-              if (cartProvider.totalQuantity > 0)
-                Positioned(
-                  right: 5,
-                  top: 5,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: const BoxDecoration(
-                      color: Colors.amber,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${cartProvider.totalQuantity}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+          if (!isAdmin)
+            Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const CartScreen()),
+                    );
+                  },
+                ),
+                if (cartProvider.totalQuantity > 0)
+                  Positioned(
+                    right: 5,
+                    top: 5,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '${cartProvider.totalQuantity}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(width: 8),
         ],
       ),
@@ -294,6 +298,8 @@ class _FoodCardState extends State<FoodCard> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAdmin = authProvider.currentUser?.isAdmin ?? false;
 
     return GestureDetector(
       onTap: () {
@@ -420,60 +426,62 @@ class _FoodCardState extends State<FoodCard> {
                             color: Theme.of(context).primaryColor,
                           ),
                         ),
-                        // Add to Cart Button
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Theme.of(context).primaryColor,
-                                Theme.of(context)
-                                    .primaryColor
-                                    .withValues(alpha: 0.8),
+                        // Add to Cart Button - Hide for admin
+                        if (!isAdmin)
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).primaryColor,
+                                  Theme.of(context)
+                                      .primaryColor
+                                      .withValues(alpha: 0.8),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withValues(alpha: 0.3),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withValues(alpha: 0.3),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
+                            child: IconButton(
+                              icon: const Icon(Icons.add, size: 18),
+                              color: Colors.white,
+                              padding: const EdgeInsets.all(5),
+                              constraints: const BoxConstraints(
+                                minWidth: 36,
+                                minHeight: 36,
                               ),
-                            ],
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.add, size: 18),
-                            color: Colors.white,
-                            padding: const EdgeInsets.all(5),
-                            constraints: const BoxConstraints(
-                              minWidth: 36,
-                              minHeight: 36,
+                              onPressed: widget.food.isAvailable
+                                  ? () {
+                                      cartProvider.addItem(widget.food);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '${widget.food.name} added to cart ✓',
+                                          ),
+                                          duration: const Duration(
+                                            milliseconds: 1500,
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.green
+                                              .withValues(alpha: 0.9),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  : null,
                             ),
-                            onPressed: widget.food.isAvailable
-                                ? () {
-                                    cartProvider.addItem(widget.food);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          '${widget.food.name} added to cart ✓',
-                                        ),
-                                        duration: const Duration(
-                                          milliseconds: 1500,
-                                        ),
-                                        behavior: SnackBarBehavior.floating,
-                                        backgroundColor:
-                                            Colors.green.withValues(alpha: 0.9),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                : null,
                           ),
-                        ),
                       ],
                     ),
                   ],

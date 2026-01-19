@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/admin_order_provider.dart';
 import 'login_screen.dart';
 import 'admin_screen.dart';
 
@@ -33,6 +34,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _addressController = TextEditingController(
       text: authProvider.currentUser?.address ?? '',
     );
+
+    // Start listening to orders if user is admin
+    if (authProvider.currentUser?.isAdmin == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<AdminOrderProvider>(context, listen: false)
+            .listenToOrders();
+      });
+    }
   }
 
   @override
@@ -79,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final adminOrderProvider = Provider.of<AdminOrderProvider>(context);
     final user = authProvider.currentUser;
 
     return Scaffold(
@@ -225,18 +235,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: double.infinity,
                             child: ElevatedButton.icon(
                               onPressed: () {
+                                // Reset notification count when entering admin panel
+                                adminOrderProvider.resetNewOrderCount();
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (_) => const AdminScreen(),
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.admin_panel_settings),
-                              label: const Text('Admin Panel - Manage Foods'),
+                              icon: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  const Icon(Icons.admin_panel_settings),
+                                  if (adminOrderProvider.newOrderCount > 0)
+                                    Positioned(
+                                      right: -8,
+                                      top: -8,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 20,
+                                          minHeight: 20,
+                                        ),
+                                        child: Text(
+                                          '${adminOrderProvider.newOrderCount}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              label: Text(
+                                adminOrderProvider.newOrderCount > 0
+                                    ? 'Admin Panel - ${adminOrderProvider.newOrderCount} New Orders!'
+                                    : 'Admin Panel - Manage Foods',
+                              ),
                               style: ElevatedButton.styleFrom(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 16),
-                                backgroundColor: Colors.blue,
+                                backgroundColor:
+                                    adminOrderProvider.newOrderCount > 0
+                                        ? Colors.orange
+                                        : Colors.blue,
                                 foregroundColor: Colors.white,
                               ),
                             ),
