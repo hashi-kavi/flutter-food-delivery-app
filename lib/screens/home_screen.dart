@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../models/food.dart';
 import '../services/firebase_food_service.dart';
 import '../providers/cart_provider.dart';
-import '../providers/auth_provider.dart';
 import 'food_details_screen.dart';
 import 'cart_screen.dart';
 import 'order_screen.dart';
@@ -62,7 +61,7 @@ class _FoodListViewState extends State<FoodListView> {
   final FirebaseFoodService _foodService = FirebaseFoodService();
   String _selectedCategory = 'All';
   String _searchQuery = '';
-  
+
   final List<String> _categories = [
     'All',
     'Pizza',
@@ -75,7 +74,6 @@ class _FoodListViewState extends State<FoodListView> {
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -205,7 +203,9 @@ class _FoodListViewState extends State<FoodListView> {
                       .where(
                         (food) =>
                             food.name.toLowerCase().contains(_searchQuery) ||
-                            food.description.toLowerCase().contains(_searchQuery),
+                            food.description
+                                .toLowerCase()
+                                .contains(_searchQuery),
                       )
                       .toList();
                 }
@@ -273,7 +273,8 @@ class _FoodListViewState extends State<FoodListView> {
           borderRadius: BorderRadius.circular(20),
         ),
         side: BorderSide(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+          color:
+              isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
         ),
       ),
     );
@@ -425,7 +426,9 @@ class _FoodCardState extends State<FoodCard> {
                             gradient: LinearGradient(
                               colors: [
                                 Theme.of(context).primaryColor,
-                                Theme.of(context).primaryColor.withValues(alpha: 0.8),
+                                Theme.of(context)
+                                    .primaryColor
+                                    .withValues(alpha: 0.8),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(10),

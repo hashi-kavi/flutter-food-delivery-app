@@ -6,6 +6,10 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/order_provider.dart';
+import 'providers/food_provider.dart';
+import 'providers/admin_order_provider.dart';
+import 'providers/admin_user_provider.dart';
+import 'providers/analytics_provider.dart';
 
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -29,12 +33,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => FoodProvider()),
+        ChangeNotifierProvider(create: (_) => AdminOrderProvider()),
+        ChangeNotifierProvider(create: (_) => AdminUserProvider()),
+        ChangeNotifierProvider(create: (_) => AnalyticsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Food Delivery App',
         theme: ThemeData(
-          useMaterial3: false, 
+          useMaterial3: false,
           primarySwatch: Colors.red,
           scaffoldBackgroundColor: Colors.grey[50],
           appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),

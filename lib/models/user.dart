@@ -6,6 +6,7 @@ class AppUser {
   final String name;
   final String? phone;
   final String? address;
+  final bool isAdmin;
 
   AppUser({
     required this.uid,
@@ -13,6 +14,7 @@ class AppUser {
     required this.name,
     this.phone,
     this.address,
+    this.isAdmin = false,
   });
 
   // Convert to Map for Firestore
@@ -23,6 +25,7 @@ class AppUser {
       'name': name,
       'phone': phone,
       'address': address,
+      'isAdmin': isAdmin,
     };
   }
 
@@ -34,6 +37,7 @@ class AppUser {
       name: map['name'] ?? '',
       phone: map['phone'],
       address: map['address'],
+      isAdmin: map['isAdmin'] ?? false,
     );
   }
 
@@ -43,6 +47,7 @@ class AppUser {
     String? email,
     String? name,
     String? phone,
+    bool? isAdmin,
     String? address,
   }) {
     return AppUser(
@@ -51,6 +56,7 @@ class AppUser {
       name: name ?? this.name,
       phone: phone ?? this.phone,
       address: address ?? this.address,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }

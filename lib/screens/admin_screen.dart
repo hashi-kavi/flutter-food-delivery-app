@@ -3,6 +3,10 @@
 
 import 'package:flutter/material.dart';
 import '../services/firebase_food_seeder.dart';
+import 'admin/admin_food_management_screen.dart';
+import 'admin/admin_orders_screen.dart';
+import 'admin/admin_user_management_screen.dart';
+import 'admin/admin_analytics_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -124,6 +128,74 @@ class _AdminScreenState extends State<AdminScreen> {
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AdminFoodManagementScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.manage_search),
+                        label: const Text('Manage Individual Foods'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AdminOrdersScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.receipt_long),
+                        label: const Text('Manage Orders'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AdminUserManagementScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.people),
+                        label: const Text('Manage Users'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AdminAnalyticsScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.bar_chart),
+                        label: const Text('View Analytics'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton.icon(
                         onPressed: _isLoading ? null : _seedFoods,
                         icon: const Icon(Icons.cloud_upload),
                         label: const Text('Add Sample Foods to Firebase'),
@@ -199,7 +271,8 @@ class _AdminScreenState extends State<AdminScreen> {
                       ),
                       const SizedBox(height: 16),
                       _buildFoodInfo('10 sample food items'),
-                      _buildFoodInfo('Categories: Pizza, Burger, Dessert, Drinks, Asian'),
+                      _buildFoodInfo(
+                          'Categories: Pizza, Burger, Dessert, Drinks, Asian'),
                       _buildFoodInfo('Real images from Unsplash'),
                       _buildFoodInfo('Prices ranging from \$4.99 to \$14.99'),
                     ],

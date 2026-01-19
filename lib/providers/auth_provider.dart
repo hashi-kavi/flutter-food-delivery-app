@@ -17,27 +17,20 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _user != null;
 
   AuthProvider() {
-    // Mock user for testing without Firebase
-    _user = AppUser(
-      uid: 'test123',
-      email: 'guest@test.com',
-      name: 'Guest User',
-      phone: '123-456-7890',
-      address: '123 Main St',
-    );
-
-    /* 
     // Listen to auth state changes
-    _authService.authStateChanges.listen((User? firebaseUser) async {
+    _authService.authStateChanges.listen((firebaseUser) async {
       if (firebaseUser != null) {
-        _user = await _authService.getUserData(firebaseUser.uid);
+        try {
+          _user = await _authService.getUserData(firebaseUser.uid);
+        } catch (e) {
+          _user = null;
+        }
         notifyListeners();
       } else {
         _user = null;
         notifyListeners();
       }
     });
-    */
   }
 
   // Sign up

@@ -199,9 +199,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: authProvider.isLoading
-                                  ? null
-                                  : _saveProfile,
+                              onPressed:
+                                  authProvider.isLoading ? null : _saveProfile,
                               child: authProvider.isLoading
                                   ? const SizedBox(
                                       height: 20,
@@ -218,28 +217,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 24),
 
-                    // Admin Panel button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const AdminScreen(),
+                    // Admin Panel button (only for admin users)
+                    if (user.isAdmin == true)
+                      Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const AdminScreen(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.admin_panel_settings),
+                              label: const Text('Admin Panel - Manage Foods'),
+                              style: ElevatedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.admin_panel_settings),
-                        label: const Text('Admin Panel - Manage Foods'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                        ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                    ),
-
-                    const SizedBox(height: 16),
 
                     // Logout button
                     SizedBox(
