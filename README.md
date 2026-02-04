@@ -58,20 +58,17 @@ lib/
 
 ### Shopping Cart
 - Add/remove items
-- Quantity management
-- Real-time total calculation
-- Local state (not persisted)
 
 ### Orders
-- Place orders from cart
-- View order history
-- Order status tracking (pending, preparing, delivered, cancelled)
-- Order details view
 
 ### Profile
-- View and edit user information
-- Update name, phone, and address
-- Display user email
+
+### Admin Analytics
+- Admins can view analytics dashboard
+- Total revenue calculation
+- Order statistics (total, delivered, pending)
+- Most ordered foods
+- Real-time updates from Firestore
 
 ## 🚀 Setup Instructions
 
@@ -216,13 +213,13 @@ service cloud.firestore {
 
 This is a 2-day project with specific scope constraints:
 
-- ❌ No admin panel
-- ❌ No real-time delivery tracking
-- ❌ No payment gateway integration
-- ❌ No food search functionality
-- ❌ Cart is not persisted (clears on app restart)
-- ❌ No order editing after placement
-- ❌ No push notifications
+
+## 🛡️ Admin Features
+
+- Admin panel for managing foods, users, and orders
+- Analytics dashboard for business insights
+- Ability to seed and delete sample foods
+- Toggle user admin status
 
 ## 🐛 Troubleshooting
 
@@ -250,3 +247,20 @@ This project is for educational purposes.
 ## 👨‍💻 Development
 
 Built with Flutter & Firebase following clean architecture principles.
+
+## 👥 Team & Contributions
+
+This project was developed by a 2-member team.
+
+### 👩‍💻 Kavindya Ranaweera (You)
+- Implemented Firebase integration (Authentication, Firestore)
+- Developed Admin Analytics dashboard
+- Implemented order statistics & revenue calculation
+- Designed Firestore data models and security rules
+- Backend logic and state management (Providers & Services)
+
+### 👨‍💻 Viduni Marasingha
+- Designed and implemented UI screens
+- Developed Login & Signup screens
+- Handled navigation and basic user experience flow
+- UI styling and layout design
